@@ -6,16 +6,21 @@ from rango.forms import CategoryForm
 from django.shortcuts import redirect
 from rango.forms import PageForm
 from django.urls import reverse
+from rango.forms import PageForm
 
 
-def index(request):
-    context_dict = {'boldmessage':"Crunchy,creamy,cookie,candy,cupcake!"}
-    return render(request,'rango/index.html', context=context_dict)
-    return HttpResponse("Rango says hey there partner! <br/> < a href='/rango/about/ '>About</ a>")
 def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
-    context_dict = {'categories': category_list}
-    return render(request, 'rango/index.html', context_dict)
+    page_list = Page.objects.order_by('-views')[:5]
+
+    context_dict = {}
+    context_dict['boldmessage'] = 'Crunchy, creamy, cookie, candy, cupcake!'
+    context_dict['categories'] = category_list
+    context_dict['pages'] = page_list
+    
+    return render(request, 'rango/index.html', context=context_dict)
+    return HttpResponse("Rango says hey there partner!<a herf='/rango/about/'>About</a>")
+
 def about(request):
     context_dict = {'boldmessage': 'This tutorial has been put together by Jianhua Hua.'}
     return render(request,'rango/about.html', context=context_dict)
@@ -55,6 +60,7 @@ def add_page(request, category_name_slug):
         category = None
     if category is None:
         return redirect('/rango/')
+
     form = PageForm()
 
     if request.method == 'POST':
